@@ -1,5 +1,6 @@
 import sqlite3 as sq
 import openpyxl
+#привет
 
 #dhfdjjf
 def sql_start(): #создание базы данных и таблиц
