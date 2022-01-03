@@ -4,19 +4,22 @@ from tkinter import ttk
 import tkinter as tk
 from datetime import *
 from tkcalendar import Calendar, DateEntry
-
-
 import create_bot
 from data_base import sqlite_db
 
-# from create_bot import bot, id_admin
-# from aiogram.utils import executor
+sourse = []
+status = []
+type_of_complains = []
+
+type_of_appeal = ['сайт(жалобы)', 'сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
+                   'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений']
+
 
 
 now = datetime.now().date()
 window = tk.Tk()
 window.title("Обработка обращений от пользователей")
-window.geometry('500x600')
+window.geometry('1000x750')
 tab_control = ttk.Notebook(window)
 tab_1 = ttk.Frame(tab_control)
 tab_2 = ttk.Frame(tab_control)
@@ -24,51 +27,49 @@ tab_control.add(tab_1, text='Обработка входящих')
 tab_control.add(tab_2, text='Изменение статуса')
 
 tab_control.pack(expand=1, fill='both')
-# lbl_number_title = Label(tab_1, text='Номер:')
-# lbl_number = Label(tab_1, text='1',  fg='green', font='Times 10')
-# lbl_date_title = Label(tab_1, text='Дата:')
-# lbl_date = Label(tab_1, text=now, fg='green', font='Times 10')
-# lbl_date_appeal_title = Label(tab_1, text='Дата обращения:', width=18)
-# entry_date_appeal = Entry(tab_1)
-# entry_date_appeal.insert(0, now)
-# lbl_source = Label(tab_1, text='Источник:', height=2)
-# combo_source = Combobox(tab_1, state='readonly')
-# combo_source['values'] = ['сайт(жалобы)', 'сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
-#                    'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений']
-#
-# lbl_tupe_of_appeal = Label(tab_1, text='Тип обращений:')
-# combo_tupe_of_appeal = Combobox(tab_1, state='readonly')
-# combo_tupe_of_appeal['values'] = ['сайт(жалобы)', 'сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
-#                    'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений']
-# lbl_status = Label(tab_1, text='Статус:')
-# combo_status = Combobox(tab_1, state='readonly')
-# combo_status['values'] = ['сайт(жалобы)', 'сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
-#                    'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений']
-# lbl_type_of_complains = Label(tab_1, text='Тип жалоб:')
-# combo_tupe_of_complains = Combobox(tab_1, state='readonly')
-# combo_tupe_of_complains['values'] = ['сайт(жалобы)', 'сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
-#                    'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений']
-#
-#
-# cal = DateEntry(tab_1, width=30, bg="darkblue", fg="white", year=2016, month=9, day=6)
-#
-# cal.grid(column=6, row=6)
-#
-# lbl_number_title.grid(column=1, row=1)
-# lbl_number.grid(column=1, row=0)
-# lbl_date_title.grid(column=2, row=0)
-# lbl_date.grid(column=3, row=0)
-# lbl_date_appeal_title.grid(column=4, row=0)
-# entry_date_appeal.grid(column=5, row=0)
-# lbl_source.grid(column=0, row=1)
-# combo_source.grid(column=1, row=1,  columnspan=3)
-# lbl_tupe_of_appeal.grid(column=4, row=1)
-# combo_tupe_of_appeal.grid(column=5, row=1, columnspan=3)
-# lbl_status.grid(column=0, row=3)
-# combo_status.grid(column=1, row=3, columnspan=3)
-# lbl_type_of_complains.grid(column=4, row=3)
-# combo_tupe_of_complains.grid(column=5, row=3, columnspan=3)
-# ---------------------------------------------
+lbl_number_title = Label(tab_1, text='Номер:')
+lbl_number = Label(tab_1, text='1',  fg='green', font='Times 10')
+lbl_date_title = Label(tab_1, text='Дата:')
+lbl_date = Label(tab_1, text=now, fg='green', font='Times 10')
+lbl_date_appeal_title = Label(tab_1, text='Дата обращения:', width=18)
+#entry_date_appeal = Entry(tab_1)
+#entry_date_appeal.insert(0, now)
+lbl_source = Label(tab_1, text='Источник:', height=2)
+combo_source = Combobox(tab_1, state='readonly')
+combo_source['values'] = sourse
+
+lbl_type_of_appeal = Label(tab_1, text='Тип обращений:')
+combo_type_of_appeal = Combobox(tab_1, state='readonly')
+combo_type_of_appeal['values'] = type_of_appeal
+lbl_status = Label(tab_1, text='Статус:')
+combo_status = Combobox(tab_1, state='readonly')
+combo_status['values'] = status
+lbl_type_of_complains = Label(tab_1, text='Тип жалоб:')
+combo_type_of_complains = Combobox(tab_1, state='readonly')
+combo_type_of_complains['values'] = type_of_complains
+
+
+cal = DateEntry(tab_1, width=30, bg="darkblue", fg="white", year= now.year, month=now.month, day=now.day)
+
+cal.grid(column=6, row=0)
+
+lbl_number_title.grid(column=0, row=0)
+lbl_number.grid(column=1, row=0)
+lbl_date_title.grid(column=2, row=0)
+lbl_date.grid(column=3, row=0)
+lbl_date_appeal_title.grid(column=4, row=0)
+cal.grid(column=5, row=0)
+#entry_date_appeal.grid(column=5, row=0)
+lbl_source.grid(column=0, row=1)
+combo_source.grid(column=1, row=1,  columnspan=3)
+lbl_type_of_appeal.grid(column=4, row=1)
+combo_type_of_appeal.grid(column=5, row=1, columnspan=3)
+lbl_status.grid(column=0, row=3)
+combo_status.grid(column=1, row=3, columnspan=3)
+lbl_type_of_complains.grid(column=4, row=3)
+combo_type_of_complains.grid(column=5, row=3, columnspan=3)
+tab_control.pack(expand=1, fill='both')
+# ---------------------------------------------\
 # class Interface:
 #     def label(self, name, value, pos_x, pos_y):
 #         name = Label(tab_1, text=value)
@@ -80,28 +81,25 @@ tab_control.pack(expand=1, fill='both')
 #         name = Combobox(tab_1)
 #         name['position'] = value
 #         name.grid(column=pos_x, row=pos_y)
-# class Button(Interface):
-#         def __iner__(self, name, value, com, pos_x, pos_y):
-#             def com():
-#                 if Interface.label.name = '1':
-#                     pass
-#
-#             name = Button(tab_1, text=value, command=com)
-#             name.grid(column=pos_x, row=pos_y)
-#
+#     def button(self):
+#         print(self.name)
+
+
+
 # Inter = Interface()
+# Inter.button()
 # Inter.label('lbl_number_title', 'Номер:', 0, 0)
-# Inter.label('lbl_number', '1', 1, 0)
+# Inter.label('lbl_number', 1, 1, 0)
 # Inter.label('lbl_date', 'Дата', 2, 0)
-# -------------------------------------------------
-
-
+#
+# tab_control.pack(expand=1, fill='both')
 def check (code_store):
-     address_store = report[0]
-     code_chain = report[1]
-     name_chain = report[2]
-
-     print(address_store, code_chain, name_chain)
+    pass
+     # address_store = report[0]
+     # code_chain = report[1]
+     # name_chain = report[2]
+     #
+     # print(address_store, code_chain, name_chain)
 
 
 def save (number_request, date_request, date, sourse,  type_request, type_complaint,
