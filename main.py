@@ -1,71 +1,124 @@
 from tkinter import *
 from tkinter.ttk import Combobox
 from tkinter import ttk
+from tkinter import scrolledtext
 import tkinter as tk
 from datetime import *
 from tkcalendar import Calendar, DateEntry
 import create_bot
 from data_base import sqlite_db
 
-sourse = []
-status = []
-type_of_complains = []
-type_of_appeal = ['сайт(жалобы)', 'сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
-                   'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений']
+def check ():
+    try:
+
+        code_store = code_store_input.get()
+        print(code_store)
+        report = sqlite_db.sql_select_pharma(code_store)
+
+
+        adress = report[0]
+        code = report[1]
+        name = report[2]
+        adress_store_input.set(adress)
+        code_chain_input.set(code)
+        name_chain_input.set(name)
+
+        print (code_store)
+    except:
+        pass
+
+sourse = ('Сайт(жалобы)', 'Сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
+                   'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений')
+status = ['В работе','Закрыта','Жалоба неудовлетворена']
+type_of_complains = ['Не соответсвует цена','Товар не выдали','Не соответсвует адлесс','Не соответсвует режим работы','Не соответсвует товар','Прочее' ]
+type_of_appeal = ['Жалоба общая', 'Жалоба на аптеку','Предложение','Вопрос','Похвала']
 
 now = datetime.now().date()
 window = tk.Tk()
 window.title("Обработка обращений от пользователей")
-window.geometry('1000x750')
+window.geometry('1200x600')
 tab_control = ttk.Notebook(window)
 tab_1 = ttk.Frame(tab_control)
 tab_2 = ttk.Frame(tab_control)
 tab_control.add(tab_1, text='Обработка входящих')
 tab_control.add(tab_2, text='Изменение статуса')
 
-lbl_number_title = Label(tab_1, text='Номер:')
-lbl_number = Label(tab_1, text='1',  fg='green', font='Times 10')
-
-lbl_date_title = Label(tab_1, text='Дата:')
-lbl_date = Label(tab_1, text=now, fg='green', font='Times 10')
-lbl_date_appeal_title = Label(tab_1, text='Дата обращения:', width=18)
-calendar = DateEntry(tab_1, width=30, bg="darkblue", fg="white", year= now.year, month=now.month, day=now.day)
-lbl_source = Label(tab_1, text='Источник:', height=2)
-combo_source = Combobox(tab_1, state='readonly')
+lbl_number_title = Label(tab_1, text='Номер:').grid(column=0, row=0, sticky=W, padx=10, pady=10)
+lbl_number = Label(tab_1, text='1',  fg='green', font='Times 10').grid(column=1, row=0, pady=10)
+lbl_date_title = Label(tab_1, text='Дата:').grid(column=2, row=0, sticky=W, padx=10, pady=10)
+lbl_date = Label(tab_1, text=now, fg='green', font='Times 10').grid(column=3, row=0, pady=10)
+lbl_date_appeal_title = Label(tab_1, text='Дата обращения:', width=18).grid(column=4, row=0, sticky=W, padx=10, pady=10)
+calendar = DateEntry(tab_1,state='readonly', width=30, bg="darkblue", fg="white", year=now.year, month=now.month, day=now.day).grid(column=5, row=0, padx=10, pady=10)
+lbl_source = Label(tab_1, text='Источник:').grid(column=0, row=1, sticky=W, padx=10, pady=10)
+combo_source = Combobox(tab_1, state='readonly', width=30)
 combo_source['values'] = sourse
-lbl_type_of_appeal = Label(tab_1, text='Тип обращений:')
-combo_type_of_appeal = Combobox(tab_1, state='readonly')
-combo_type_of_appeal['values'] = type_of_appeal
-lbl_status = Label(tab_1, text='Статус:')
-combo_status = Combobox(tab_1, state='readonly')
-combo_status['values'] = status
-lbl_type_of_complains = Label(tab_1, text='Тип жалоб:')
-combo_type_of_complains = Combobox(tab_1, state='readonly')
-combo_type_of_complains['values'] = type_of_complains
+combo_source.grid(column=1, row=1,  columnspan=1, padx=10, pady=10)
 
-lbl_number_title.grid(column=0, row=0)
-lbl_number.grid(column=1, row=0)
-lbl_date_title.grid(column=2, row=0)
-lbl_date.grid(column=3, row=0)
-lbl_date_appeal_title.grid(column=4, row=0)
-calendar.grid(column=5, row=0)
-lbl_source.grid(column=0, row=1)
-combo_source.grid(column=1, row=1,  columnspan=3)
-lbl_type_of_appeal.grid(column=4, row=1)
-combo_type_of_appeal.grid(column=5, row=1, columnspan=3)
-lbl_status.grid(column=0, row=3)
-combo_status.grid(column=1, row=3, columnspan=3)
-lbl_type_of_complains.grid(column=4, row=3)
-combo_type_of_complains.grid(column=5, row=3, columnspan=3)
+lbl_type_of_appeal = Label(tab_1, text='Тип обращений:').grid(column=2, row=1,sticky=W, padx=10, pady=10)
+combo_type_of_appeal = Combobox(tab_1, state='readonly', width=30)
+combo_type_of_appeal['values'] = type_of_appeal
+combo_type_of_appeal.grid(column=3, row=1, columnspan=1,padx=10, pady=10)
+
+
+lbl_status = Label(tab_1, text='Статус:').grid(column=0, row=2, sticky=W, padx=10, pady=10)
+combo_status = Combobox(tab_1, state='readonly', width=30)
+combo_status['values'] = status
+combo_status.grid(column=1, row=2, columnspan=1, padx=10, pady=10)
+
+lbl_type_of_complains = Label(tab_1, text='Тип жалоб:').grid(column=2, row=2, sticky=W, padx=10, pady=10)
+combo_type_of_complains = Combobox(tab_1, state='readonly', width=30)
+combo_type_of_complains['values'] = type_of_complains
+combo_type_of_complains.grid(column=3, row=2, columnspan=1)
+
+lbl_customer = Label(tab_1, text=' Данные пользователя', fg='blue', font='Times 12').grid(column=0, row=3, sticky=W, padx=10, pady=5)
+lbl_name = Label(tab_1, text='Ф.И.О.:').grid(column=0, row=4, sticky=W, padx=10, pady=10)
+entry_name = Entry(tab_1, width=95).grid(column=1, row=4, sticky=W, padx=10, pady=10, columnspan=3)
+lbl_phone = Label(tab_1, text='Телефон:').grid(column=0, row=5, sticky=W, padx=10, pady=10)
+entry_phone = Entry(tab_1, width=25).grid(column=1, row=5, sticky=W,  padx=10, pady=10, columnspan=1)
+lbl_email = Label(tab_1, text='Email:').grid(column=2, row=5, sticky=W, padx=10, pady=10)
+entry_email = Entry(tab_1, width=35).grid(column=3, row=5, sticky=W, padx=10, pady=10, columnspan=2)
+
+lbl_pharma = Label(tab_1, text=' Данные аптек', fg='blue', font='Times 12').grid(column=0, row=6, sticky=W, padx=10, pady=10)
+lbl_code_store = Label(tab_1, text='Код аптеки:').grid(column=0, row=7, sticky=W, padx=10, pady=10)
+code_store_input = StringVar()
+entry_code_store = Entry(tab_1, textvariable=code_store_input).grid(column=1, row=7, sticky=W, padx=10, pady=10)
+
+lbl_address_store_title = Label(tab_1, text='Адрес аптеки:').grid(column=2, row=7, sticky=W, padx=10, pady=10)
+adress_store_input = StringVar()
+lbl_address_store = Label(tab_1, textvariable=adress_store_input, bg="lightblue", width=30).grid(column=3, row=7, sticky=W, padx=10, pady=10,columnspan=2)
+lbl_code_chain_title = Label(tab_1, text='Код сети:').grid(column=0, row=8, sticky=W, padx=10, pady=10)
+code_chain_input = StringVar()
+lbl_code_chain = Label(tab_1, textvariable=code_chain_input, bg="lightblue", width=17).grid(column=1, row=8, sticky=W, padx=10, pady=10)
+lbl_name_chain_title = Label(tab_1, text='Наименование сети:').grid(column=2, row=8, sticky=W, padx=10, pady=10)
+name_chain_input = StringVar()
+lbl_name_chain = Label(tab_1, textvariable=name_chain_input, bg="lightblue", width=30).grid(column=3, row=8, sticky=W, padx=10, pady=10, columnspan=2)
+lbl_order_number = Label(tab_1, text='Номер заказа:').grid(column=0, row=9, sticky=W, padx=10, pady=10)
+entry_order_number = Entry(tab_1).grid(column=1, row=9, sticky=W, padx=10, pady=10)
+btn_check = Button(tab_1, text='Проверить', width=30,bg="orange", fg="green",command=check).grid(column=3, row=9,  padx=10, pady=10)
+lbl_text = Label(tab_1, text='Текст обращения', fg='blue', font='Times 12').grid(column=4, row=1, sticky=W, padx=10, pady=10)
+txt = scrolledtext.ScrolledText(tab_1, width=45, height=20).grid (column=4, row=0, sticky=W, rowspan=35, columnspan=3)
+btn_save = Button(tab_1, text='Сохранить', width=20, bg="yellow", fg="red", command=check).grid(column=0, row=10,  padx=10, pady=30)
+
+#lbl_number_title.grid(column=0, row=0)
+#lbl_number.grid(column=1, row=0)
+# lbl_date_title.grid(column=2, row=0)
+# lbl_date.grid(column=3, row=0)
+# lbl_date_appeal_title.grid(column=4, row=0)
+# calendar.grid(column=5, row=0)
+# lbl_source.grid(column=0, row=1)
+#combo_source.grid(column=1, row=1,  columnspan=3)
+# lbl_type_of_appeal.grid(column=4, row=1)
+# combo_type_of_appeal.grid(column=5, row=1, columnspan=3)
+# lbl_status.grid(column=0, row=3)
+# combo_status.grid(column=1, row=3, columnspan=3)
+# lbl_type_of_complains.grid(column=4, row=3)
+# combo_type_of_complains.grid(column=5, row=3, columnspan=3)
+# lbl_customer.grid(column=0, row=4)
+
+
+
 tab_control.pack(expand=1, fill='both')
 
-def check (code_store):
-    pass
-     # address_store = report[0]
-     # code_chain = report[1]
-     # name_chain = report[2]
-     #
-     # print(address_store, code_chain, name_chain)
 
 
 def save(number_request, date_request, date, sourse,  type_request, type_complaint,
@@ -83,7 +136,7 @@ def save(number_request, date_request, date, sourse,  type_request, type_complai
 
 
 
-
+sqlite_db.sql_start()
 window.mainloop()
 
 #create_bot.send_telegram()

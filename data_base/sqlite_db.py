@@ -29,7 +29,7 @@ def sql_insert_request(number_request, date_request, date, sourse,  type_request
 def sql_select_pharma(code_store):
     report = cur.execute('SELECT address_store, code_chain, name_chain,'
                          ' manager FROM pharma WHERE code_store == ?', (code_store,)).fetchall()
-
+    report = report[0]
     return report
 def sql_select_requests(status):
     no_finish = cur.execute('SELECT number_request, client, phone, email, code_store'
