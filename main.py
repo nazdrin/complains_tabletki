@@ -10,17 +10,23 @@ from data_base import sqlite_db
 
 
 def save():
+    number = sqlite_db.number_json_load()
+    number += 1
+    sqlite_db.number_json_save(number)
+    lbl_number = StringVar()
+    lbl_number.set(number)
+    Label(tab_1, textvariable=lbl_number, fg='green', font='Times 10').grid(column=1, row=0, pady=10)
 
-    report = sqlite_db.sql_select_pharma(code_store)
-    if report == []:
-        print('некорректный код ')
-        pass
-    else:
-         sqlite_db.sql_insert_request(number_request, date_request, date, sourse,  type_request, type_complaint,
-                       client, email, phone, number_order, code_store, text_request, text_answer)
-         if type_request == 'Жалоба на аптеку':
-             create_bot.send_telegram(number_request, date_request, date, sourse,  type_request, type_complaint,
-                       client, email, phone, number_order, code_store, text_request, text_answer)
+    # report = sqlite_db.sql_select_pharma(code_store)
+    # if report == []:
+    #     print('некорректный код ')
+    #     pass
+    # else:
+    #      sqlite_db.sql_insert_request(number_request, date_request, date, sourse,  type_request, type_complaint,
+    #                    client, email, phone, number_order, code_store, text_request, text_answer)
+    #      if type_request == 'Жалоба на аптеку':
+    #          create_bot.send_telegram(number_request, date_request, date, sourse,  type_request, type_complaint,
+    #                    client, email, phone, number_order, code_store, text_request, text_answer)
 
 def check ():
     try:
@@ -60,7 +66,8 @@ tab_control.add(tab_2, text='Изменение статуса')
 lbl_number_title = Label(tab_1, text='Номер:').grid(column=0, row=0, sticky=W, padx=10, pady=10)
 lbl_number = StringVar()
 lbl_number.set(sqlite_db.number_json_load())
-lbl_number = Label(tab_1, text='1', textvariable=lbl_number, fg='green', font='Times 10').grid(column=1, row=0, pady=10)
+lbl_number = Label(tab_1, textvariable=lbl_number, fg='green', font='Times 10').grid(column=1, row=0, pady=10)
+
 lbl_date_title = Label(tab_1, text='Дата:').grid(column=2, row=0, sticky=W, padx=10, pady=10)
 lbl_date = Label(tab_1, text=now, fg='green', font='Times 10').grid(column=3, row=0, pady=10)
 lbl_date_appeal_title = Label(tab_1, text='Дата обращения:', width=18).grid(column=4, row=0, sticky=W, padx=10, pady=10)
@@ -77,7 +84,9 @@ combo_type_of_appeal.grid(column=3, row=1, columnspan=1,padx=10, pady=10)
 
 
 lbl_status = Label(tab_1, text='Статус:').grid(column=0, row=2, sticky=W, padx=10, pady=10)
-combo_status = Combobox(tab_1, state='readonly', width=30)
+combo_status = StringVar()
+
+combo_status = Combobox(tab_1, state='readonly',textvariable=combo_status, width=30)
 combo_status['values'] = status
 combo_status.current(0)
 combo_status.grid(column=1, row=2, columnspan=1, padx=10, pady=10)
