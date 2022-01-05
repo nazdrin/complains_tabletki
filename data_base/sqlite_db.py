@@ -61,6 +61,7 @@ def number_json_load ():# изменение номера запроса
 
     return number_request
 
+
 def number_json_save(number):  # изменение номера запроса
     with open('number.txt', 'w') as outfile:
         json.dump(number, outfile)
