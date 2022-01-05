@@ -8,6 +8,20 @@ from tkcalendar import Calendar, DateEntry
 import create_bot
 from data_base import sqlite_db
 
+
+def save():
+
+    report = sqlite_db.sql_select_pharma(code_store)
+    if report == []:
+        print('некорректный код ')
+        pass
+    else:
+         sqlite_db.sql_insert_request(number_request, date_request, date, sourse,  type_request, type_complaint,
+                       client, email, phone, number_order, code_store, text_request, text_answer)
+         if type_request == 'Жалоба на аптеку':
+             create_bot.send_telegram(number_request, date_request, date, sourse,  type_request, type_complaint,
+                       client, email, phone, number_order, code_store, text_request, text_answer)
+
 def check ():
     try:
 
@@ -19,7 +33,7 @@ def check ():
         adress = report[0]
         code = report[1]
         name = report[2]
-        adress_store_input.set(adress)
+        address_store_input.set(adress)
         code_chain_input.set(code)
         name_chain_input.set(name)
 
@@ -44,7 +58,9 @@ tab_control.add(tab_1, text='Обработка входящих')
 tab_control.add(tab_2, text='Изменение статуса')
 
 lbl_number_title = Label(tab_1, text='Номер:').grid(column=0, row=0, sticky=W, padx=10, pady=10)
-lbl_number = Label(tab_1, text='1',  fg='green', font='Times 10').grid(column=1, row=0, pady=10)
+lbl_number = StringVar()
+lbl_number.set(sqlite_db.number_json_load())
+lbl_number = Label(tab_1, text='1', textvariable=lbl_number, fg='green', font='Times 10').grid(column=1, row=0, pady=10)
 lbl_date_title = Label(tab_1, text='Дата:').grid(column=2, row=0, sticky=W, padx=10, pady=10)
 lbl_date = Label(tab_1, text=now, fg='green', font='Times 10').grid(column=3, row=0, pady=10)
 lbl_date_appeal_title = Label(tab_1, text='Дата обращения:', width=18).grid(column=4, row=0, sticky=W, padx=10, pady=10)
@@ -63,6 +79,7 @@ combo_type_of_appeal.grid(column=3, row=1, columnspan=1,padx=10, pady=10)
 lbl_status = Label(tab_1, text='Статус:').grid(column=0, row=2, sticky=W, padx=10, pady=10)
 combo_status = Combobox(tab_1, state='readonly', width=30)
 combo_status['values'] = status
+combo_status.current(0)
 combo_status.grid(column=1, row=2, columnspan=1, padx=10, pady=10)
 
 lbl_type_of_complains = Label(tab_1, text='Тип жалоб:').grid(column=2, row=2, sticky=W, padx=10, pady=10)
@@ -84,8 +101,8 @@ code_store_input = StringVar()
 entry_code_store = Entry(tab_1, textvariable=code_store_input).grid(column=1, row=7, sticky=W, padx=10, pady=10)
 
 lbl_address_store_title = Label(tab_1, text='Адрес аптеки:').grid(column=2, row=7, sticky=W, padx=10, pady=10)
-adress_store_input = StringVar()
-lbl_address_store = Label(tab_1, textvariable=adress_store_input, bg="lightblue", width=30).grid(column=3, row=7, sticky=W, padx=10, pady=10,columnspan=2)
+address_store_input = StringVar()
+lbl_address_store = Label(tab_1, textvariable=address_store_input, bg="lightblue", width=30).grid(column=3, row=7, sticky=W, padx=10, pady=10,columnspan=2)
 lbl_code_chain_title = Label(tab_1, text='Код сети:').grid(column=0, row=8, sticky=W, padx=10, pady=10)
 code_chain_input = StringVar()
 lbl_code_chain = Label(tab_1, textvariable=code_chain_input, bg="lightblue", width=17).grid(column=1, row=8, sticky=W, padx=10, pady=10)
@@ -97,7 +114,18 @@ entry_order_number = Entry(tab_1).grid(column=1, row=9, sticky=W, padx=10, pady=
 btn_check = Button(tab_1, text='Проверить', width=30,bg="orange", fg="green",command=check).grid(column=3, row=9,  padx=10, pady=10)
 lbl_text = Label(tab_1, text='Текст обращения', fg='blue', font='Times 12').grid(column=4, row=1, sticky=W, padx=10, pady=10)
 txt = scrolledtext.ScrolledText(tab_1, width=45, height=20).grid (column=4, row=0, sticky=W, rowspan=35, columnspan=3)
-btn_save = Button(tab_1, text='Сохранить', width=20, bg="yellow", fg="red", command=check).grid(column=0, row=10,  padx=10, pady=30)
+btn_save = Button(tab_1, text='Сохранить', width=20, bg="yellow", fg="red", command= save).grid(column=0, row=10,  padx=10, pady=30)
+
+#
+# var_1 = BooleanVar()
+# var_2 = BooleanVar()
+# def change ():
+# #var_1.set(0)
+#     var_2.set(0)
+#     pass
+# btn_1 = Checkbutton(tab_2,text ='red', variable = var_1).grid(column=0, row=0)
+# btn_2 = Checkbutton(tab_2,text ='gren',variable = var_2).grid(column=1, row=0,)
+
 
 #lbl_number_title.grid(column=0, row=0)
 #lbl_number.grid(column=1, row=0)

@@ -1,5 +1,6 @@
 import sqlite3 as sq
 import openpyxl
+import json
 #привет
 #kuku
 
@@ -54,3 +55,12 @@ def load_xls ():
         manager = e.value
         cur.execute('INSERT INTO pharma VALUES (?, ?, ?, ?, ?)', (code, address, code_chain, name_chain, manager))
         base.commit()
+def number_json_load ():# изменение номера запроса
+    with open('number.txt') as json_file:
+        number_request = json.load(json_file)
+
+    return number_request
+
+def number_json_save(number):  # изменение номера запроса
+    with open('number.txt', 'w') as outfile:
+        json.dump(number, outfile)
