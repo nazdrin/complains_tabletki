@@ -21,11 +21,9 @@ def sql_start(): #создание базы данных и таблиц
     base.commit()
     #load_xls()
 
-def sql_insert_request(number_request, date_request, date, sourse,  type_request, type_complaint,
-                       client, email, phone, number_order, code_store, text_request, text_answer):
-    cur.execute('INSERT INTO requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                (number_request, date_request, date, sourse,  type_request, type_complaint, client, email, phone,
-                 number_order, code_store, text_request, text_answer))
+def sql_insert_request(number, date_request, date, sourse, type_appeal, type_complains, client, email, phone, number_order, code_store, text_appeal, text_answer,status):
+    cur.execute('INSERT INTO requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                (number, date_request, date, sourse, type_appeal, type_complains, client, email, phone, number_order, code_store, text_appeal, text_answer,status))
     base.commit()
 def sql_select_pharma(code_store):
     report = cur.execute('SELECT address_store, code_chain, name_chain,'
