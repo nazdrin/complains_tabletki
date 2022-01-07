@@ -13,10 +13,10 @@ sourse = ('Сайт(жалобы)', 'Сайт(обратная связь', 'inf
 status = ['В работе','Закрыта','Жалоба неудовлетворена','']
 type_of_complains = ['Не соответсвует цена','Товар не выдали','Не соответсвует адлесс','Не соответсвует режим работы','Не соответсвует товар','Прочее' ]
 type_of_appeal = ['Жалоба общая', 'Жалоба на аптеку','Предложение','Вопрос','Похвала']
-id_manager = {'ivk':1821564597,'tun':1248740780, 'sia':807661373} #1011022316
+id_manager = {'ivk': 1821564597,'tun': 1248740780, 'sia': 807661373} #1011022316
 id_chat = -736190786
 
-
+#42975
 
 def save():
     number = sqlite_db.number_json_load()
@@ -37,43 +37,37 @@ def save():
     text_answer = ''
     status = combo_status.get()
     sqlite_db.sql_insert_request(number, date_request, date, sourse, type_appeal, type_complains, client, email, phone, number_order, code_store, text_appeal, text_answer, status)
-    report = sqlite_db.sql_select_pharma(code_store)# нужно сделать проверку на ошибку
-    adress = report[0]
-    code = report[1]
-    name = report[2]
-    manager = report[3]
-    id_user = id_manager.get(manager)
-    print (id_user)
+
     if type_appeal == type_of_appeal[1]:
-        if type_complains == type_of_complains[0] or type_of_complains[1]:
+        try:
+            report = sqlite_db.sql_select_pharma(code_store)  # нужно сделать проверку на ошибку
+            adress = report[0]
+            code = report[1]
+            name = report[2]
+            manager = report[3]
+            id_user = id_manager.get(manager)
+            if type_complains == type_of_complains[0] or type_of_complains[1]:
 
-            create_bot.send_telegram(number, client, phone, email, code_store, adress, code, name, number_order, text_appeal, id_user)
-            pass
-        else:
-            create_bot.send_telegram(number, client, phone, email, code_store, adress, code, name, number_order,
-                                     text_appeal, id_chat)
-            pass
-
+                create_bot.send_telegram(number, client, phone, email, code_store, adress, code, name, number_order,
+                                         text_appeal, id_user)
+                pass
+            else:
+                create_bot.send_telegram(number, client, phone, email, code_store, adress, code, name, number_order,
+                                         text_appeal, id_chat)
+                pass
+        except:
+                create_bot.send_telegram_group(number, client, phone, email, code_store,  number_order, text_appeal)
+                pass
     zero = ''
-
-
     txt.delete (1.0,END)
-
-    combo_status.current(3)
-
-
-    #Label(tab_1, textvariable=lbl_number, fg='green', font='Times 10').grid(column=1, row=0, pady=10)
-
-    # report = sqlite_db.sql_select_pharma(code_store)
-    # if report == []:
-    #     print('некорректный код ')
-    #     pass
-    # else:
-    #      sqlite_db.sql_insert_request(number_request, date_request, date, sourse,  type_request, type_complaint,
-    #                    client, email, phone, number_order, code_store, text_request, text_answer)
-    #      if type_request == 'Жалоба на аптеку':
-    #          create_bot.send_telegram(number_request, date_request, date, sourse,  type_request, type_complaint,
-    #                    client, email, phone, number_order, code_store, text_request, text_answer)
+    entry_code_store.delete(0, END)
+    entry_order_number.delete(0, END)
+    entry_name.delete(0, END)
+    entry_phone.delete(0, END)
+    entry_email.delete(0, END)
+    lbl_code_chain.configure(text=zero)
+    lbl_name_chain.configure(text=zero)
+    lbl_address_store.configure(text=zero)
 
 def check ():
     try:
@@ -85,6 +79,7 @@ def check ():
         lbl_address_store.configure(text=adress)
         lbl_code_chain.configure(text=code)
         lbl_name_chain.configure(text=name)
+        return report
     except:
         pass
 
@@ -101,8 +96,7 @@ tab_control.add(tab_2, text='Изменение статуса')
 
 lbl_number_title = Label(tab_1, text='Номер:')
 lbl_number_title .grid(column=0, row=0, sticky=W, padx=10, pady=10)
-# lbl_number = StringVar()
-# lbl_number.set(sqlite_db.number_json_load())
+
 lbl_number = Label(tab_1,  fg='green', font='Times 12')
 lbl_number.grid(column=1, row=0, pady=9)
 lbl_number.configure(text=sqlite_db.number_json_load())
@@ -218,69 +212,3 @@ tab_control.pack(expand=1, fill='both')
 
 sqlite_db.sql_start()
 window.mainloop()
-
-
-#create_bot.send_telegram()
-#executor.start_polling(dp, skip_updates=True, on_startup=on_startup)
-
-# ---------------------------------------------\
-# class Interface:
-#     def label(self, name, value, pos_x, pos_y):
-#         name = Label(tab_1, text=value)
-#         name.grid(column=pos_x, row=pos_y)
-#     def entry(self, name, pos_x, pos_y):
-#         name = Entry(tab_1)
-#         name.grid(column=pos_x, row=pos_y)
-#     def combobox(self, name, value, pos_x, pos_y):
-#         name = Combobox(tab_1)
-#         name['position'] = value
-#         name.grid(column=pos_x, row=pos_y)
-#     def button(self):
-#         print(self.name)
-
-
-
-# Inter = Interface()
-# Inter.button()
-# Inter.label('lbl_number_title', 'Номер:', 0, 0)
-# Inter.label('lbl_number', 1, 1, 0)
-# Inter.label('lbl_date', 'Дата', 2, 0)
-#
-# tab_control.pack(expand=1, fill='both')
-
-# from datetime import date
-#
-# root = tk.Tk()
-# # change ttk theme to 'clam' to fix issue with downarrow button
-# style = ttk.Style(root)
-# style.theme_use('clam')
-#
-# class MyDateEntry(DateEntry):
-#     def __init__(self, master=None, **kw):
-#         DateEntry.__init__(self, master=None, **kw)
-#         # add black border around drop-down calendar
-#         self._top_cal.configure(bg='black', bd=1)
-#         # add label displaying today's date below
-#         tk.Label(self._top_cal, bg='gray90', anchor='w',
-#                  text='Today: %s' % date.today().strftime('%x')).pack(fill='x')
-#
-# # create the entry and configure the calendar colors
-# de = MyDateEntry(root, year=2016, month=9, day=6,
-#                  selectbackground='gray80',
-#                  selectforeground='black',
-#                  normalbackground='white',
-#                  normalforeground='black',
-#                  background='gray90',
-#                  foreground='black',
-#                  bordercolor='gray90',
-#                  othermonthforeground='gray50',
-#                  othermonthbackground='white',
-#                  othermonthweforeground='gray50',
-#                  othermonthwebackground='white',
-#                  weekendbackground='white',
-#                  weekendforeground='black',
-#                  headersbackground='white',
-#                  headersforeground='gray70')
-# de.pack()
-# root.mainloop()
-
