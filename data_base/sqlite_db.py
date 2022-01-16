@@ -14,26 +14,39 @@ def sql_start(): #создание базы данных и таблиц
     base.execute('CREATE TABLE IF NOT EXISTS {} (code_store P'
                  'RIMARY KEY, address_store, code_chain, name_chain, manager)'.format('pharma'))
     base.commit()
-    base.execute('CREATE TABLE IF NOT EXISTS {} (number_request PRIMARY KEY, dat'
-                 'e_request, date, sourse,  type_request, type_complaint, client, email, phone, number_order'
-                 ', code_store, text_request, text_answer, status)'
+    base.execute('CREATE TABLE IF NOT EXISTS {} (number PRIMARY KEY, date_request, date, sourse,  type_appeal, type_complains, client, email, phone, number_order'
+                 ', code_store, address_store, text_appeal, text_answer, status, code_chain, name_chain, manager)'
                  .format('requests'))
     base.commit()
     #load_xls()
 
-def sql_insert_request(number, date_request, date, sourse, type_appeal, type_complains, client, email, phone, number_order, code_store, text_appeal, text_answer,status):
-    cur.execute('INSERT INTO requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                (number, date_request, date, sourse, type_appeal, type_complains, client, email, phone, number_order, code_store, text_appeal, text_answer,status))
+def sql_insert_request(number, date_request, date, sourse,  type_appeal, type_complains, client, email, phone, number_order, code_store, address_store, text_appeal, text_answer, status, code_chain, name_chain, manager):
+    cur.execute('INSERT INTO requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                (number, date_request, date, sourse,  type_appeal, type_complains, client, email, phone, number_order, code_store, address_store, text_appeal, text_answer, status, code_chain, name_chain, manager))
     base.commit()
 def sql_select_pharma(code_store):
-    report = cur.execute('SELECT address_store, code_chain, name_chain,'
-                         ' manager FROM pharma WHERE code_store == ?', (code_store,)).fetchall()
+    try:
+        report = cur.execute('SELECT address_store, code_chain, name_chain,'
+                             ' manager FROM pharma WHERE code_store == ?', (code_store,)).fetchall()
+        report = report[0]
+        return report
+    except:
+        report = ['','','','']
+        return report
+def sql_select_requests(number_appeal):
+
+    report = cur.execute('SELECT date, number, client, phone, email, code_chain,address_store, text_appeal, status FROM requests WHERE number == ?', (int(number_appeal),)).fetchall()
     report = report[0]
+    print(report)
     return report
-def sql_select_requests(status):
-    no_finish = cur.execute('SELECT number_request, client, phone, email, code_store'
-                         ' manager FROM request WHERE status == ?', (status,)).fetchall()
+
+def sql_select_requests_all(status):
+    no_finish = cur.execute('SELECT date, number, client, phone, email, code_chain,address_store, text_appeal, status FROM requests WHERE status == ?', (status,)).fetchall()
     return no_finish
+def update_status(status, nunber_appeal):
+    cur.execute('UPDATE requests SET status == ? WHERE number == ?', (status, nunber_appeal))
+    base.commit()
+
 def load_xls ():
 
     wb = openpyxl.load_workbook('Pharma.xlsx')  # Заполняем словарь pharmacies_chain из єксель при перезапуске бота

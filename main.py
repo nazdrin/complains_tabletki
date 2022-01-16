@@ -20,9 +20,6 @@ id_chat = -736190786
 
 def save():
     number = sqlite_db.number_json_load()
-    number += 1
-    sqlite_db.number_json_save(number)
-    lbl_number.configure(text=number)
     date_request = calendar.get()
     date = now
     sourse = combo_source.get()
@@ -33,11 +30,21 @@ def save():
     phone = entry_phone.get()
     number_order = entry_order_number.get()
     code_store = entry_code_store.get()
-    text_appeal = txt.get(1.0,END)
+    text_appeal = txt.get(1.0, END)[:-1]
+    print(text_appeal)
+    print(len(text_appeal))
     text_answer = ''
     status = combo_status.get()
-    sqlite_db.sql_insert_request(number, date_request, date, sourse, type_appeal, type_complains, client, email, phone, number_order, code_store, text_appeal, text_answer, status)
+    parametr_pharma = sqlite_db.sql_select_pharma(code_store)
+    address_store = parametr_pharma[0]
+    code_chain = parametr_pharma[1]
+    name_chain = parametr_pharma[2]
+    manager = parametr_pharma[3]
+    sqlite_db.sql_insert_request(number, date_request, date, sourse,  type_appeal, type_complains, client, email, phone, number_order, code_store, address_store, text_appeal, text_answer, status, code_chain, name_chain, manager)
 
+    number += 1
+    sqlite_db.number_json_save(number)
+    lbl_number.configure(text=number)
     if type_appeal == type_of_appeal[1]:
         try:
             report = sqlite_db.sql_select_pharma(code_store)  # нужно сделать проверку на ошибку
@@ -82,12 +89,108 @@ def check ():
         return report
     except:
         pass
+# def load ():
+#     try:
+#         number_appeal = entry_appeal_number.get()
+#         report = sqlite_db.sql_select_pharma(code_store)
+#         adress = report[0]
+#         code = report[1]
+#         name = report[2]
+#         lbl_address_store.configure(text=adress)
+#         lbl_code_chain.configure(text=code)
+#         lbl_name_chain.configure(text=name)
+#         return report
+#     except:
+#         pass
+def load_appeal_detales ():
+    number_appeal = entry_appeal_number.get()
+    try:
+        report = sqlite_db.sql_select_requests(number_appeal)
+        # parametr_chain = sqlite_db.sql_select_pharma(report[5])
+        # report = list(report)
+        # report.insert(5, parametr_chain[1])
+        # i = 0
+        # print(report)
+        i = 0
+        for key, value in object_label_dict.items():
+            if i >= 9:
+                pass
+            else:
+                value.label.configure(text=report[i])
+
+                i += 1
+    except:
+        pass
+
+def load_appeal_detales_all ():
+
+    no_finish = sqlite_db.sql_select_requests_all(status[0])
+    # parametr_chain = sqlite_db.sql_select_pharma(report[5])
+    # report = list(report)
+    # report.insert(5, parametr_chain[1])
+    # i = 0
+    # print(report)
+    g = len(no_finish)
+    print(no_finish)
+    print(g)
+
+    list_all =[]
+    for x in no_finish:
+        y=list(x)
+        list_all.extend(y)
+    q = len(list_all)
+    print(q)
+    print(list_all)
+    i=0
+    a=0
+
+    for key, value in object_label_dict.items():
+        i += 1
+        if i > 9 and i <= 9+q:
+
+             value.label.configure(text=list_all[a])
+             a += 1
+
+        else:
+            value.label.configure(text='')
+
+# доделать логткуdef
+def save_new_status ():
+   status = object_combo_list[0].combo_status.get()
+   print(status)
+
+   number = object_label_dict.get('3Номер').label.cget('text')
+   print(number)
+   sqlite_db.update_status(status, number)
+
+   load_appeal_detales()
+   load_appeal_detales_all()
+
+def save_new_status_mass ():
+    for i in range (1, 13):
+        status = object_combo_list[i].combo_status.get()
+        print(status)
+        number_key = str(i+5) + 'Номер'
+        print(number_key)
+        number = object_label_dict.get(number_key).label.cget('text')
+        print(number)
+        sqlite_db.update_status(status, number)
+        load_appeal_detales_all()
+        #load_appeal_detales()
+
+
+
+
+
+
+
+
 
 
 now = datetime.now().date()
 window = tk.Tk()
 window.title("Обработка обращений от пользователей")
-window.geometry('1200x600')
+window.geometry('1210x550')
 tab_control = ttk.Notebook(window)
 tab_1 = ttk.Frame(tab_control)
 tab_2 = ttk.Frame(tab_control)
@@ -208,7 +311,105 @@ txt.grid(column=4, row=0, sticky=W, rowspan=35, columnspan=3)
 btn_save = Button(tab_1, text='Сохранить', width=20, bg="yellow", fg="red", command= save)
 btn_save.grid(column=0, row=10,  padx=10, pady=30)
 
+class Label_class:
+    def __init__ (self, row, column, bg, fg, columnspan, width, padx, pady, text):
+        self.label = Label(tab_2, bg=bg, fg=fg, width=width, text=text)
+        self.label.grid(column=column, row=row, columnspan=columnspan, padx=padx, pady=pady)
+class Combo_class:
+    def __init__(self, row):
+        self.combo_status = Combobox(tab_2, state='readonly', width=18)
+        self.combo_status['values'] = status
+        self.combo_status.current(0)
+        self.combo_status.grid(column=9, row=row, padx=1, pady=1)
+
+object_combo_list = []
+
+combo_row = [3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+
+
+for row in combo_row:
+    obj = Combo_class(row)
+    object_combo_list.append(obj)
+
+
+object_label_title_list = []
+object_label_dict = {}
+
+param_1 = ['light gray', 'green', 1, 10, 1, 1]
+param_2 = ['light gray', 'green', 1, 20, 1, 1]
+param_3 = ['light gray', 'green', 1, 40, 1, 1]
+param_1_1 = ['light blue', 'blue', 1, 10, 1, 1]
+param_2_1 = ['light blue', 'blue', 1, 20, 1, 1]
+param_3_1 = ['light blue', 'blue', 1, 40, 1, 1]
+
+label_parametr_dict = {'Дата ': param_1, 'Номер': param_1, 'Ф.И.О': param_2, 'Телефон': param_1, 'Email': param_1, 'Код сети': param_1, 'Аптека': param_2, 'Текст': param_3, 'Статус': param_1, 'Новый статус': param_2}
+label_parametr_dict_1 = {'Дата ': param_1_1, 'Номер': param_1_1, 'Ф.И.О': param_2_1, 'Телефон': param_1_1, 'Email': param_1_1, 'Код сети': param_1_1, 'Аптека': param_2_1, 'Текст': param_3_1, 'Статус': param_1_1}
+
+label_row = [2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+
+for row in label_row:
+    if row == 2:
+        col = 0
+        for key, value in label_parametr_dict.items():
+            obj = Label_class(row, col, value[0], value[1], value[2], value[3], value[4], value[5], key)
+            col += 1
+            object_label_title_list.append(obj)
+    elif row == 5:
+        col_1 = 0
+        for key, value in label_parametr_dict.items():
+            obj = Label_class(row, col_1, value[0], value[1], value[2], value[3],value[4], value[5], key)
+            col_1 += 1
+            object_label_title_list.append(obj)
+    else:
+        col_2 = 0
+        for key, value in label_parametr_dict_1.items():
+            ind = str(row) + str(key)
+            obj = Label_class(row, col_2, value[0], value[1], value[2], value[3],value[4], value[5], '')
+            col_2 += 1
+
+            object_label_dict[ind] = obj
+print (object_label_dict)
+lbl_store = Label(tab_2, text='Поиск и изменения статуса одного обрашения', fg='blue', font='Times 12')
+lbl_store.grid(column=0, row=0, sticky=W, padx=10, pady=5, columnspan=4)
+entry_appeal_number = Entry(tab_2, width=12)
+entry_appeal_number.grid(column=0, row=1, sticky=W, padx=5, pady=5)
+btn_load = Button(tab_2, text='Загрузить', bg="light green", fg="orange", command=load_appeal_detales)
+btn_load.grid(column=1, row=1,  padx=5, pady=5)
+btn_save_status_one = Button(tab_2, text='Сохранить',  bg="yellow", fg="red", command=save_new_status)
+btn_save_status_one.grid(column=2, row=1,  padx=5, pady=5)
+lbl_store_mass = Label(tab_2, text='Контроль  обрашений без конечного статуса', fg='blue', font='Times 12')
+lbl_store_mass.grid(column=0, row=4, sticky=W, padx=10, pady=5, columnspan=4)
+btn_save_status_mass = Button(tab_2, text='Сохранить всё' ,  bg="yellow", fg="red", command=save_new_status_mass)
+btn_save_status_mass.grid(column=0, row=17,  padx=10, pady=10, columnspan=10, sticky=E)
+
+#object_label_title_list[1].label.config(text ='1233')
+
+
+    #         colm_1 += 1
+    #         obj = G_v(row, colm_1, text, bg = 'red' , fg='blue', width= 10)
+    #         object_list.append(obj)
+    # elif row == 5:
+    #     colm_2 = 0
+    #     for text in title_list:
+    #         colm_2 += 1
+    #         obj = G_v(row, colm_2,text, bg = 'red' , fg='blue', width= 10)
+    #         object_list.append(obj)
+    # else:
+    #     for y in range (8):
+    #
+    #         obj = G_v(row, column=y+1, text= '_', bg = 'lightblue', fg='red', width= 10)
+    #
+    #         object_list.append(obj)
+    #     obj_rad = G_v()
+    #     #obj_rad.
+
+
+#object_list[0].label.configure(text='gd')
+
+
+
 tab_control.pack(expand=1, fill='both')
 
 sqlite_db.sql_start()
+load_appeal_detales_all()
 window.mainloop()
