@@ -1,10 +1,7 @@
 import sqlite3 as sq
 import openpyxl
 import json
-#привет
-#kuku
 
-#dhfdjjf
 def sql_start(): #создание базы данных и таблиц
     global base
     global cur
@@ -19,7 +16,7 @@ def sql_start(): #создание базы данных и таблиц
                  .format('requests'))
     base.commit()
     #load_xls()
-
+    #load_xls()
 def sql_insert_request(number, date_request, date, sourse,  type_appeal, type_complains, client, email, phone, number_order, code_store, address_store, text_appeal, text_answer, status, code_chain, name_chain, manager):
     cur.execute('INSERT INTO requests VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                 (number, date_request, date, sourse,  type_appeal, type_complains, client, email, phone, number_order, code_store, address_store, text_appeal, text_answer, status, code_chain, name_chain, manager))
@@ -35,18 +32,15 @@ def sql_select_pharma(code_store):
         return report
 def sql_select_requests(number_appeal):
 
-    report = cur.execute('SELECT date, number, client, phone, email, code_chain,address_store, text_appeal, status FROM requests WHERE number == ?', (int(number_appeal),)).fetchall()
+    report = cur.execute('SELECT date, number, client, phone, email, code_chain,address_store, text_appeal, status FROM requests WHERE number == ?', (number_appeal,)).fetchall()
     report = report[0]
-    print(report)
     return report
-
 def sql_select_requests_all(status):
     no_finish = cur.execute('SELECT date, number, client, phone, email, code_chain,address_store, text_appeal, status FROM requests WHERE status == ?', (status,)).fetchall()
     return no_finish
 def update_status(status, nunber_appeal):
     cur.execute('UPDATE requests SET status == ? WHERE number == ?', (status, nunber_appeal))
     base.commit()
-
 def load_xls ():
 
     wb = openpyxl.load_workbook('Pharma.xlsx')  # Заполняем словарь pharmacies_chain из єксель при перезапуске бота
@@ -71,8 +65,6 @@ def number_json_load ():# изменение номера запроса
         number_request = json.load(json_file)
 
     return number_request
-
-
 def number_json_save(number):  # изменение номера запроса
     with open('number.txt', 'w') as outfile:
         json.dump(number, outfile)
