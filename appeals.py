@@ -7,8 +7,7 @@ from tkcalendar import Calendar, DateEntry
 import create_bot
 from data_base import sqlite_db
 
-sourse = ('Сайт(жалобы)', 'Сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook',
-                   'Appstore', 'Playmarket', 'Instagram', 'Отзывы из приложений')
+sourse = ('CRM', 'Сайт(обратная связь', 'info@tabletri.ua', 'Телефон', 'Facebook', 'Instagram', 'Appstore', 'Playmarket')
 status = ['В работе', 'Закрыта', 'Жалоба неудовлетворена']
 type_of_complains = ['Не соответсвует цена', 'Бронь не выдали', 'Не соответсвует адрес', 'Не соответсвует режим работы','Выдали не тот товар', 'Выдали не все товары', 'Прочее']
 type_of_appeal = ['Жалоба общая', 'Жалоба на аптеку', 'Предложение', 'Вопрос', 'Похвала']
@@ -333,7 +332,7 @@ btn_save_status_mass.grid(column=0, row=17,  padx=10, pady=10, columnspan=10, st
 btn_update_appeals_mass = Button(tab_2, text='Обновить всё',  bg="light green", fg="orange", command=load_appeal_detales_all)
 btn_update_appeals_mass.grid(column=0, row=17,  padx=10, pady=10, columnspan=10, sticky=W)
 #......................................................................................................................
-f1.grid(column=0, row=0, sticky=NW, padx=5, pady=5, rowspan=3 )
+f1.grid(column=0, row=0, sticky=NW, padx=5, pady=5, rowspan=3)
 f2.grid(column=0, row=3, sticky=NW, padx=5, pady=5)
 f3.grid(column=0, row=5, sticky=NW, padx=5, pady=5)
 date_frame.grid(column=5, row=0, sticky=NW, padx=5, pady=5)
